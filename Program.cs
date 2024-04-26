@@ -1,273 +1,228 @@
-﻿public class Client
-{
-    private string firstName;
-    private string lastName;
-    private int weight;
-    private int height;
+﻿using Clients;
 
-    public string FirstName
-    {
-        get => firstName;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new Exception("First name cannot be empty.");
-            firstName = value.Trim();
-        }
+Client client = new();
+List<Client> Clientlist = [];
+bool loop = true;
+LoadFile(Clientlist);
+
+Console.Clear();
+while(loop) {
+  try {
+    displayMainMenu();
+    string mainMenuChoice = Prompt("\nEnter a Main Menu Choice: ").ToUpper();
+    if(mainMenuChoice == "L")
+      displayAllClients();
+    if(mainMenuChoice == "F")
+      findClient();
+    if(mainMenuChoice == "A")
+      AddClientToList(Clientlist);
+    if(mainMenuChoice == "E")
+      EditClient();
+    if(mainMenuChoice == "D")
+     DeleteClient();
+    if(mainMenuChoice == "S")
+      showClientBmiInfo();
+    if (mainMenuChoice == "Q") {
+      SaveClients();
+			loop = false;
+			throw new Exception("Bye, hope to see you again.");
     }
-
-    public string LastName
-    {
-        get => lastName;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new Exception("Last name cannot be empty.");
-            lastName = value.Trim();
-        }
-    }
-
-    public int Weight
-    {
-        get => weight;
-        set
-        {
-            if (value <= 0)
-                throw new Exception("Weight must be greater than zero.");
-            weight = value;
-        }
-    }
-
-    public int Height
-    {
-        get => height;
-        set
-        {
-            if (value <= 0)
-                throw new Exception("Height must be greater than zero.");
-            height = value;
-        }
-    }
-
-    public double BmiScore => Math.Round((double)weight / (height * height) * 703, 2);
-
-    public string BmiStatus
-    {
-        get
-        {
-            if (BmiScore <= 18.4) return "Underweight";
-            if (BmiScore > 18.4 && BmiScore <= 24.9) return "Normal";
-            if (BmiScore > 24.9 && BmiScore <= 39.9) return "Overweight";
-            return "Obese";
-        }
-    }
-
-    public string FullName => $"{lastName}, {firstName}";
-
-    public Client(string firstName, string lastName, int weight, int height)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-        Weight = weight;
-        Height = height;
-    }
-}
-public class ClientManager
-{
-    private static Client[] clients = new Client[100];
-    private static int clientCount = 0;
-
-    public static void LoadData()
-    {
-        // This method would populate the clients array with initial data
-        // For simulation, let's add a couple of clients manually
-        clients[0] = new Client("John", "Doe", 180, 72);
-        clients[1] = new Client("Jane", "Doe", 130, 65);
-        clientCount = 2;
-    }
-
-    public static void SaveData()
-    {
-        for (int i = 0; i < clientCount; i++)
-        {
-            Client client = clients[i];
-            Console.WriteLine($"{client.FirstName},{client.LastName},{client.Weight},{client.Height}");
-        }
-    }
-
-    public static void AddClient(string firstName, string lastName, int weight, int height)
-    {
-        if (clientCount >= clients.Length)
-            throw new Exception("Client array is full.");
-
-        clients[clientCount++] = new Client(firstName, lastName, weight, height);
-    }
-
-    public static void DisplayClients()
-    {
-        for (int i = 0; i < clientCount; i++)
-        {
-            Client client = clients[i];
-            Console.WriteLine($"{client.FullName}, Weight: {client.Weight}, Height: {client.Height}, BMI: {client.BmiScore}, Status: {client.BmiStatus}");
-        }
-    }
-
-    public static void FindClient(string searchTerm)
-    {
-        bool found = false;
-        for (int i = 0; i < clientCount; i++)
-        {
-            if (clients[i].FullName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-            {
-                Client client = clients[i];
-                Console.WriteLine($"{client.FullName}, Weight: {client.Weight}, Height: {client.Height}, BMI: {client.BmiScore}, Status: {client.BmiStatus}");
-                found = true;
-            }
-        }
-        if (!found) Console.WriteLine("No client found with that name.");
-    }
+  }  catch (Exception ex) {
+    Console.WriteLine(ex.Message);
+  } 
 }
 
-class Program
-{
-    static void Main()
-    {
-        ClientManager.LoadData();  // Load initial data
+void displayMainMenu() {
+  Console.WriteLine($"\n MENU OPTIONS");  
+  Console.WriteLine($"(L)ist All Clients");
+  Console.WriteLine($"(F)ind Client Information");
+  Console.WriteLine($"(A)dd New Client Record");
+  Console.WriteLine($"(E)dit Client Information");
+  Console.WriteLine($"(D)elete Client Record");
+  Console.WriteLine($"(S)how Client BMI Information");
+  Console.WriteLine($"(Q)uit");
+}
 
-        bool exitProgram = false;
-        while (!exitProgram)
-        {
-            Console.Clear();
-            DisplayMenu();
-            string command = Console.ReadLine().ToLower();
+void displayEditMenu() {
+  Console.WriteLine($"(F)irst Name");
+  Console.WriteLine($"(L)ast Name");
+  Console.WriteLine($"(H)eight");
+  Console.WriteLine($"(W)eight");
+  Console.WriteLine($"(R)eturn to Main Menu");
+}
 
-            switch (command)
-            {
-                case "n":
-                    NewClient();
-                    break;
-                case "s":
-                    ShowBmiInfo();
-                    break;
-                case "e":
-                    EditClient();
-                    break;
-                case "l":
-                    ClientManager.DisplayClients();
-                    break;
-                case "f":
-                    FindClient();
-                    break;
-                case "q":
-                    exitProgram = true;
-                    break;
-                default:
-                    Console.WriteLine("Invalid selection, please try again.");
-                    break;
-            }
+string Prompt(string prompt){
+	string input = "";
+	while (true) {
+		try {
+		Console.Write(prompt);
+		input = Console.ReadLine().Trim();
+		if(string.IsNullOrEmpty(input))
+			throw new Exception($"Empty Input: Please enter something.");
+		break;
+		}catch (Exception ex) {
+			Console.WriteLine(ex.Message);
+		}
+	}
+	return input;
+}
 
-            if (!exitProgram)
-            {
-                Console.WriteLine("\nPress any key to return to the menu...");
-                Console.ReadKey();
-            }
+double SecondPrompt(String msg, double min) {
+	double num = 0;
+	while (true) {
+		try {
+			Console.Write($"{msg} between {min}: ");
+			num = double.Parse(Console.ReadLine());
+			if (num < min)
+				throw new Exception($"Must be greater than {min:n2}");
+			break;
+		} catch (Exception ex) {
+			Console.WriteLine($"Invalid: {ex.Message}");
+		}
+	}
+	return num;
+}
+
+void LoadFile(List<Client> Clientlist) {
+  while(true) {
+    try {
+			string fileName = "client.csv";
+			string filePath = $"./data/{fileName}";
+			if (!File.Exists(filePath))
+				throw new Exception($"The file {fileName} does not exist.");
+			string[] csvFileInput = File.ReadAllLines(filePath);
+			for(int i = 0; i < csvFileInput.Length; i++) {
+				string[] items = csvFileInput[i].Split(',');
+				Client client = new(items[0], items[1], double.Parse(items[2]), double.Parse(items[3]));
+        Clientlist.Add(client);
+			}
+			Console.WriteLine($"Load complete. {fileName} has {Clientlist.Count} data entries");
+			break;
+    } catch(Exception ex) {
+      Console.WriteLine(ex.Message);
+    }
+  }
+}
+
+void displayAllClients() {
+  try {
+    if(Clientlist.Count <= 0)
+      throw new Exception($"No data has been loaded");
+    foreach(Client client in Clientlist) 
+      showClientInfo(client);
+  } catch (Exception ex) {
+    Console.WriteLine($"Error: {ex.Message}");
+  }
+}
+
+void findClient() {
+  displayAllClients();
+  string clientName = Prompt("Enter client's Firstname: ");
+  List<Client> filteredClient = Clientlist.Where(c => c.Firstname.Contains(clientName)).ToList();
+  Client selectedClient = filteredClient.FirstOrDefault();
+  Console.WriteLine($"\n{selectedClient.ToString()}");
+  Console.WriteLine($"Client's BMI Score:\t{selectedClient.BmiScore:n2}");
+	Console.WriteLine($"Client's BMI Status:\t{selectedClient.BmiStatus}");
+
+}
+
+void SaveClients() {
+  string fileName = "client.csv";
+  string filePath = $"./data/{fileName}";
+  List<String> ClientRecords = [];
+  foreach(Client data in Clientlist) {
+    ClientRecords.Add($"{data.Firstname}, {data.Lastname}, {data.Weight}, {data.Height}");
+  }
+  File.WriteAllLines(filePath, ClientRecords);
+}
+
+void EditClient() {
+  displayAllClients();
+  string clientFullName = Prompt("Enter client's Firstname: ");
+    List<Client> filteredClient = Clientlist.Where(c => c.Firstname.Contains(clientFullName)).ToList();
+    Client selectedClient = filteredClient.FirstOrDefault();
+      while(true) {
+        Console.WriteLine($"===== SELECT DATA OF TO EDIT ====="); 
+        displayEditMenu();
+        string edit = Prompt("\nEnter Edit Menu Choice: ").ToUpper();
+        if(edit == "F") {
+          selectedClient.Firstname = Prompt($"Enter Client Firstname: ");
+        } else if(edit == "L") {
+          selectedClient.Lastname = Prompt($"Enter Client Lastname: ");
+        } else if(edit == "W") {
+          selectedClient.Weight = SecondPrompt($"Enter Client Weight (lbs): ", 0);
+        } else if(edit == "H") {
+          selectedClient.Height = SecondPrompt($"Enter Client Height (inches): ", 0);
+        } else if(edit == "R") {
+          Console.WriteLine($"You have successfully updated details");
+          break;
+        } else {
+          throw new Exception("Invalid Edit Menu Choice. Please Try Again.");
         }
-    }
+      }          
+}
 
-    static void DisplayMenu()
-    {
-        Console.WriteLine("/-----------------------------------------\\");
-        Console.WriteLine("|       Personal Training App             |");
-        Console.WriteLine("\\-----------------------------------------/");
-        Console.WriteLine("\nMenu Options");
-        Console.WriteLine("============");
-        Console.WriteLine("[N]ew client");
-        Console.WriteLine("[S]how client BMI info");
-        Console.WriteLine("[E]dit client");
-        Console.WriteLine("[L]ist all clients");
-        Console.WriteLine("[F]ind client by name");
-        Console.WriteLine("[Q]uit");
-        Console.Write("\nEnter menu selection: ");
-    }
-
-    static void NewClient()
-    {
-        try
-        {
-            Console.WriteLine("Enter client's first name:");
-            string firstName = Console.ReadLine();
-            Console.WriteLine("Enter client's last name:");
-            string lastName = Console.ReadLine();
-            Console.WriteLine("Enter client's weight in pounds:");
-            int weight = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter client's height in inches:");
-            int height = Convert.ToInt32(Console.ReadLine());
-
-            ClientManager.AddClient(firstName, lastName, weight, height);
-            Console.WriteLine("Client added successfully!");
+void DeleteClient() { 
+  displayAllClients();
+  string clientFullName = Prompt("Enter client's Firstname: ");
+  List<Client> filteredClient = Clientlist.Where(c => c.Firstname.Contains(clientFullName)).ToList();
+  Client selectedClient = filteredClient.FirstOrDefault();
+      while(true) {
+        string yesno = Prompt($"You are about to delete "+ selectedClient.Firstname +"'s record. Proceed? Y/N: ").ToUpper();
+        if (yesno == "Y") {
+          Clientlist.Remove(selectedClient);
+          Console.WriteLine($"{selectedClient.Firstname}'s has been deleted.");
+          break;
+        } else if (yesno == "N") {
+          Console.WriteLine($"Delete operation cancelled for {selectedClient.Firstname}.");
+          break;
+        } else {
+          Console.WriteLine($"Invalid confirmation input. Please enter 'Y' or 'N'.");
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
-    }
+      }
+}
 
-    static void ShowBmiInfo()
-    {
-        Console.WriteLine("Enter the client's full name to view BMI info:");
-        string fullName = Console.ReadLine().Trim();
-        
-        // Leverage ClientManager to find the client
-        ClientManager.FindClient(fullName);
-    }
+void AddClientToList(List<Client> Clientlist) {
+  GetFirstname(client);
+  GetLastname(client);
+  GetWeight(client);
+  GetHeight(client);
+  Clientlist.Add(client);
+}
 
-    static void EditClient()
-    {
-        Console.WriteLine("Enter the client's full name to edit:");
-        string fullName = Console.ReadLine().Trim();
-        
-        // Finding and editing a client requires more interactive steps, could be complex without a List
-        // For simplicity, just simulate re-adding the client with new details
-        try
-        {
-            Console.WriteLine("Enter new first name (leave blank to keep current):");
-            string firstName = Console.ReadLine();
-            Console.WriteLine("Enter new last name (leave blank to keep current):");
-            string lastName = Console.ReadLine();
-            Console.WriteLine("Enter new weight in pounds (leave blank to keep current):");
-            string weightInput = Console.ReadLine();
-            Console.WriteLine("Enter new height in inches (leave blank to keep current):");
-            string heightInput = Console.ReadLine();
+void GetFirstname(Client client) {
+	string prompt = Prompt($"Enter Firstname: ");
+	client.Firstname = prompt;
+}
 
-            int weight = string.IsNullOrWhiteSpace(weightInput) ? -1 : int.Parse(weightInput);
-            int height = string.IsNullOrWhiteSpace(heightInput) ? -1 : int.Parse(heightInput);
+void GetLastname(Client client) {
+	string prompt = Prompt($"Enter Lastname: ");
+	client.Lastname = prompt;
+}
 
-            // Reusing the FindClient method to get the index
-            // Assuming the first match is the one to edit
-            for (int i = 0; i < ClientManager.clients.Length; i++)
-            {
-                if (ClientManager.clients[i] != null && ClientManager.clients[i].FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
-                {
-                    Client client = ClientManager.clients[i];
-                    if (!string.IsNullOrWhiteSpace(firstName)) client.FirstName = firstName.Trim();
-                    if (!string.IsNullOrWhiteSpace(lastName)) client.LastName = lastName.Trim();
-                    if (weight != -1) client.Weight = weight;
-                    if (height != -1) client.Height = height;
-                    Console.WriteLine("Client details updated successfully!");
-                    break;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating client: {ex.Message}");
-        }
-    }
+void GetWeight(Client client) {
+	double Double = SecondPrompt("Enter Weight in inches: ", 0);
+	client.Weight = Double;
+}
 
-    static void FindClient()
-    {
-        Console.WriteLine("Enter a name to search for:");
-        string searchTerm = Console.ReadLine().Trim();
-        ClientManager.FindClient(searchTerm);
-    }
+void GetHeight(Client client) {
+	double Double = SecondPrompt("Enter Height in inches: ", 0);
+	client.Height = Double;
+}
+
+void showClientInfo(Client client) {
+  if(client == null)
+    throw new Exception("No Client In Memory");
+  Console.WriteLine($"\n{client.ToString()}");
+  Console.WriteLine($"Client's BMI Score:\t{client.BmiScore:n2}");
+	Console.WriteLine($"Client's BMI Status:\t{client.BmiStatus}");
+}
+
+void showClientBmiInfo() {
+  string clientFullName = Prompt("\nEnter client's Firstname: ");
+  List<Client> filteredClient = Clientlist.Where(c => c.Firstname.Contains(clientFullName)).ToList();
+  Client selectedClient = filteredClient.FirstOrDefault();
+  Console.WriteLine($"\n{selectedClient.ToString()}");
+  Console.WriteLine($"Client's BMI Score:\t{selectedClient.BmiScore:n2}");
+	Console.WriteLine($"Client's BMI Status:\t{selectedClient.BmiStatus}");
 }

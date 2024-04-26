@@ -1,0 +1,14 @@
+C:\NAIT\CPSC1012\MyAssignment4\bin\Debug\net8.0\MyAssignment4.exe
+C:\NAIT\CPSC1012\MyAssignment4\bin\Debug\net8.0\MyAssignment4.deps.json
+C:\NAIT\CPSC1012\MyAssignment4\bin\Debug\net8.0\MyAssignment4.runtimeconfig.json
+C:\NAIT\CPSC1012\MyAssignment4\bin\Debug\net8.0\MyAssignment4.dll
+C:\NAIT\CPSC1012\MyAssignment4\bin\Debug\net8.0\MyAssignment4.pdb
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.GeneratedMSBuildEditorConfig.editorconfig
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.AssemblyInfoInputs.cache
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.AssemblyInfo.cs
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.csproj.CoreCompileInputs.cache
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.dll
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\refint\MyAssignment4.dll
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.pdb
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\MyAssignment4.genruntimeconfig.cache
+C:\NAIT\CPSC1012\MyAssignment4\obj\Debug\net8.0\ref\MyAssignment4.dll
